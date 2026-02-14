@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine Letter</title>
+  <style>
+    :root{
+      --ink:#2b2a28;
+      --muted:#6b645a;
+      --paper:#f6f1e6;
+      --paper2:#efe6d6;
+      --edge:#d8cbb3;
+      --shadow: rgba(0,0,0,0.18);
+    }
+
+    *{ box-sizing:border-box; }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      color: var(--ink);
+      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
+
+      /* soft desk + paper vibe (no shiny red) */
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(255,255,255,0.35), transparent 60%),
+        radial-gradient(900px 600px at 80% 30%, rgba(255,255,255,0.22), transparent 60%),
+        linear-gradient(135deg, #2f2b26, #1f1c18);
+      overflow:auto;
+    }
+
+    /* subtle floating dust */
+    .dust{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:0.25;
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(255,255,255,0.12) 0 1px, transparent 2px),
+        radial-gradient(circle at 70% 30%, rgba(255,255,255,0.10) 0 1px, transparent 2px),
+        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.10) 0 1px, transparent 2px);
+      background-size: 320px 320px, 420px 420px, 520px 520px;
+      animation: drift 10s ease-in-out infinite;
+      filter: blur(0.2px);
+    }
+    @keyframes drift{
+      0%{ transform: translate(0,0); }
+      50%{ transform: translate(-10px, 12px); }
+      100%{ transform: translate(0,0); }
+    }
+
+    .wrap{
+      width:min(860px, 100%);
+      position:relative;
+    }
+
+    /* PAPER TEXTURE */
+    .paper{
+      position:relative;
+      border-radius: 18px;
+      padding: 26px;
+      background:
+        /* paper fibers */
+        repeating-linear-gradient(
+          0deg,
+          rgba(0,0,0,0.015) 0px,
+          rgba(0,0,0,0.015) 1px,
+          transparent 2px,
+          transparent 6px
+        ),
+        radial-gradient(900px 500px at 30% 10%, rgba(255,255,255,0.65), transparent 60%),
+        linear-gradient(180deg, var(--paper), var(--paper2));
+      border: 1px solid var(--edge);
+      box-shadow:
+        0 30px 70px var(--shadow),
+        0 2px 0 rgba(255,255,255,0.35) inset;
+
+      overflow:hidden;
+    }
+
+    /* rough paper edge vibe */
+    .paper::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(0,0,0,0.03), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(0,0,0,0.03), transparent 55%),
+        radial-gradient(circle at 0% 100%, rgba(0,0,0,0.03), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(0,0,0,0.03), transparent 55%);
+      pointer-events:none;
+    }
+
+    .screen{
+      display:none;
+    }
+    .screen.active{
+      display:block;
+    }
+
+    /* Screen 1 (question) — simple */
+    .question{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 18px;
+      flex-wrap:wrap;
+    }
+
+    h1{
+      margin: 0;
+      font-size: clamp(26px, 4vw, 42px);
+      letter-spacing: 0.3px;
+    }
+    .small{
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 55ch;
+      font-size: 16px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 18px;
+    }
+
+    button{
+      cursor:pointer;
+      border-radius: 999px;
+      padding: 11px 16px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      border: 1px solid #cdbfa7;
+      background: rgba(255,255,255,0.55);
+      color: var(--ink);
+      transition: transform .12s ease, background .12s ease;
+    }
+    button:hover{
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.75);
+    }
+    button:active{ transform: translateY(1px); }
+
+    /* Screen 2 (letter) */
+    .letterTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      flex-wrap:wrap;
+      margin-bottom: 14px;
+    }
+
+   .bigYes{
+  margin: 0;
+  font-size: clamp(16px, 2vw, 24px);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+
+    .stamp{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color: var(--muted);
+      font-size: 14px;
+      letter-spacing: 0.4px;
+    }
+    .seal{
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px dashed #b8a98e;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.35), rgba(0,0,0,0.03));
+      display:grid;
+      place-items:center;
+      transform: rotate(-6deg);
+    }
+    .seal span{
+      font-size: 18px;
+      opacity: 0.8;
+    }
+
+    /* handwritten-ish */
+    .hand{
+      font-family: "Bradley Hand", "Segoe Print", "Comic Sans MS", ui-serif, Georgia, serif;
+      font-size: clamp(16px, 2.2vw, 20px);
+      line-height: 1.85;
+      margin: 0;
+      color: #2d2b27;
+      white-space: pre-wrap;
+    }
+
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(0,0,0,0.15), transparent);
+      margin: 14px 0 18px;
+    }
+
+    .note{
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.3px;
+    }
+
+    /* subtle corner doodles */
+    .doodle{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      opacity:0.35;
+      background:
+        radial-gradient(circle at 92% 16%, rgba(0,0,0,0.06) 0 1px, transparent 2px),
+        radial-gradient(circle at 88% 18%, rgba(0,0,0,0.05) 0 1px, transparent 2px),
+        radial-gradient(circle at 8% 86%, rgba(0,0,0,0.05) 0 1px, transparent 2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="dust"></div>
+
+  <main class="wrap">
+    <section class="paper">
+      <div class="doodle"></div>
+
+      <!-- Screen 1 -->
+      <div class="screen active" id="screen1">
+        <div class="question">
+          <div>
+            <h1>Will you be my Valentine?😊💌🥀</h1>
+            <p class="small">
+              A simple question… and there is no "no" 😈😈😈
+            </p>
+
+            <div class="btnRow">
+              <button id="yesBtn">YES</button><br>
+              <button id="ofcBtn">OFC YES</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screen 2 -->
+      <div class="screen" id="screen2">
+        <div class="letterTop">
+          <h2 class="bigYes">Safa riyas...my motiii💖</h2>
+          <div class="stamp">
+            <div class="seal"><span>✎</span></div>
+            <div>
+              Handwritten Letter<br/>
+              <span style="font-size:12px; opacity:.9;">sealed with sincerity</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <p class="hand">
+Heylo,
+
+today is valentines day and
+my baby, I love you soooooooo muchhhhhhhh. 
+I need you and I want you always for the rest if my life. 😭💌
+If we were not long distanced, I would have bought you flowers 
+but sadly we are long distanced. but still, my love for you is always active and
+I am ready to impress you always and keep you happy so I made this website instead of flowers😊💖.
+I don't have anything to say cause you are beyond good words and 
+valentines day is not the only day you are apreciated, but every single day!!!.
+words cant describe you and i am soo grateful to have you moti in my life.....✨💕
+        </p>
+
+        <div class="note">both answers lead to same page😈</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const s1 = document.getElementById("screen1");
+    const s2 = document.getElementById("screen2");
+    const yesBtn = document.getElementById("yesBtn");
+    const ofcBtn = document.getElementById("ofcBtn");
+
+    function go(){
+      s1.classList.remove("active");
+      s2.classList.add("active");
+    }
+
+    yesBtn.addEventListener("click", go);
+    ofcBtn.addEventListener("click", go);
+  </script>
+</body>
+</html>
